@@ -1,0 +1,39 @@
+{
+  "name": "@nodestrap/navscroll",
+  "version": "4.0.0",
+  "description": "A navigation component to navigate within current page, based on scroll position.",
+  "type": "module",
+  "main": "dist/Navscroll.jsx",
+  "types": "dist/Navscroll.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodestrap/navscroll.git"
+  },
+  "keywords": [
+    "navigation",
+    "menu",
+    "links",
+    "scroll",
+    "component",
+    "element",
+    "react",
+    "nodestrap",
+    "styled"
+  ],
+  "author": "heymarco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nodestrap/navscroll/issues"
+  },
+  "homepage": "https://github.com/nodestrap/navscroll#readme",
+  "dependencies": {
+    "@nodestrap/list": "^4.0.1",
+    "@nodestrap/nav": "^4.0.1",
+    "@nodestrap/utilities": "^4.0.0",
+    "@types/react": "^17.0.36",
+    "react": "^17.0.2"
+  }
+}

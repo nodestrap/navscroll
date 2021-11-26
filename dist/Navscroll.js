@@ -463,34 +463,32 @@ export function Navscroll(props) {
     // jsx functions:
     const mutateNestedNavscroll = (nestNavProps, key, deepLevelsParent) => (
     // downgrade nested Navscroll to Nav:
-    <Nav 
+    React.createElement(Nav
     // other props:
-    {...(() => {
-        const combinedProps = { ...props, ...defaultProps, };
-        for (const [name, value] of Object.entries(nestNavProps)) {
-            if (value === undefined)
-                continue;
-            combinedProps[name] = value;
-        } // for
-        return combinedProps;
-    })()} 
-    // essentials:
-    key={key}>
-            {mutateListItems(nestNavProps.children, /*deepLevelsParent: */ deepLevelsParent)}
-        </Nav>);
+    , { ...(() => {
+            const combinedProps = { ...props, ...defaultProps, };
+            for (const [name, value] of Object.entries(nestNavProps)) {
+                if (value === undefined)
+                    continue;
+                combinedProps[name] = value;
+            } // for
+            return combinedProps;
+        })(), 
+        // essentials:
+        key: key }, mutateListItems(nestNavProps.children, /*deepLevelsParent: */ deepLevelsParent)));
     const mutateListItems = (children, deepLevelsParent) => (React.Children.map(children, (child, index) => {
         const deepLevelsCurrent = [...deepLevelsParent, index];
         return (isTypeOf(child, ListItem)
             ?
-                <child.type 
+                React.createElement(child.type
                 // other props:
-                {...child.props} 
-                // essentials:
-                key={child.key ?? index} 
-                // accessibilities:
-                active={child.props.active ?? (index === activeIndices[deepLevelsCurrent.length - 1])} 
-                // events:
-                onClick={(e) => {
+                , { ...child.props, 
+                    // essentials:
+                    key: child.key ?? index, 
+                    // accessibilities:
+                    active: child.props.active ?? (index === activeIndices[deepLevelsCurrent.length - 1]), 
+                    // events:
+                    onClick: (e) => {
                         child.props.onClick?.(e);
                         if (!e.defaultPrevented) {
                             if (child.props.actionCtrl ?? props.actionCtrl ?? false) {
@@ -498,34 +496,28 @@ export function Navscroll(props) {
                                 e.preventDefault();
                             } // if
                         } // if
-                    }}>
-                    {React.Children.map(child.props.children, (child, index) => ((isTypeOf(child, Navscroll) && (!child.props.targetRef))
-                        ?
-                            mutateNestedNavscroll(child.props, child.key ?? index, /*deepLevelsParent: */ deepLevelsCurrent)
-                        :
-                            child))}
-                </child.type>
+                    } }, React.Children.map(child.props.children, (child, index) => ((isTypeOf(child, Navscroll) && (!child.props.targetRef))
+                    ?
+                        mutateNestedNavscroll(child.props, child.key ?? index, /*deepLevelsParent: */ deepLevelsCurrent)
+                    :
+                        child)))
             :
-                <ListItem 
+                React.createElement(ListItem
                 // essentials:
-                key={index} 
-                // accessibilities:
-                active={(index === activeIndices[deepLevelsCurrent.length - 1])} 
-                // events:
-                onClick={(e) => {
+                , { 
+                    // essentials:
+                    key: index, 
+                    // accessibilities:
+                    active: (index === activeIndices[deepLevelsCurrent.length - 1]), 
+                    // events:
+                    onClick: (e) => {
                         if (props.actionCtrl ?? false) {
                             itemHandleClick(e, deepLevelsCurrent);
                         } // if
-                    }}>
-                    {child}
-                </ListItem>);
+                    } }, child));
     }));
     // jsx:
-    return (<Nav 
-    // other props:
-    {...restProps} {...defaultProps}>
-            {mutateListItems(props.children, /*deepLevelsParent: */ [])}
-        </Nav>);
+    return (React.createElement(Nav, { ...restProps, ...defaultProps }, mutateListItems(props.children, /*deepLevelsParent: */ [])));
 }
 Navscroll.prototype = Nav.prototype; // mark as Nav compatible
 export { Navscroll as default };

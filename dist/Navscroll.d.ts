@@ -35,7 +35,7 @@ export declare class Viewport {
     intersect(viewport: Viewport): Viewport;
     get isFirstScroll(): boolean;
     get isLastScroll(): boolean;
-    children(targetFilter?: (e: HTMLElement) => boolean): Dimension[];
+    children(targetSelector?: string, targetFilter?: (e: HTMLElement) => boolean): Dimension[];
 }
 export declare class Dimension {
     /**
@@ -76,6 +76,7 @@ export type { ListItemProps, ListItemProps as NavscrollItemProps, ListItemProps 
 export { ListItem, ListItem as NavscrollItem, ListItem as Item };
 export interface NavscrollProps<TElement extends HTMLElement = HTMLElement> extends NavProps<TElement> {
     targetRef?: React.RefObject<HTMLElement> | HTMLElement | null;
+    targetSelector?: string;
     targetFilter?: (e: HTMLElement) => boolean;
     interpolation?: boolean;
 }

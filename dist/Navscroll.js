@@ -79,9 +79,9 @@ export class Viewport {
                 (((element.scrollHeight - element.clientHeight) - element.scrollTop) <= 0.5));
     }
     // children:
-    children(targetFilter) {
+    children(targetSelector = '*', targetFilter) {
         return ((() => {
-            const children = Array.from(this.element.children);
+            const children = Array.from(this.element.querySelectorAll(`:scope>:is(${targetSelector})`));
             if (targetFilter)
                 return children.filter(targetFilter);
             return children;
@@ -241,14 +241,16 @@ export function Navscroll(props) {
     // rest props:
     const { 
     // accessibilities:
-    orientation = 'block', ...restProps } = props;
+    orientation = 'block', 
+    // scrolls:
+    targetRef, targetSelector = '*', targetFilter, interpolation = true, ...restProps } = props;
     const defaultProps = {
         // accessibilities:
         orientation,
     };
     // dom effects:
     useEffect(() => {
-        const target = (props.targetRef instanceof HTMLElement) ? props.targetRef : props.targetRef?.current;
+        const target = (targetRef instanceof HTMLElement) ? targetRef : targetRef?.current;
         if (!target)
             return; // target was not set => nothing to do
         // functions:
@@ -262,7 +264,7 @@ export function Navscroll(props) {
                     const childCropped = child.isPartiallyVisible(viewport);
                     if (childCropped) {
                         const childViewport = childCropped.toViewport();
-                        const grandChildren = childViewport.children(props.targetFilter);
+                        const grandChildren = childViewport.children(targetSelector, targetFilter);
                         if (grandChildren.length && containsUncroppedSection(childViewport, grandChildren)) {
                             return [childCropped, index]; // found in nested
                         } // if
@@ -271,9 +273,9 @@ export function Navscroll(props) {
                 return null; // not found
             };
             const getVisibleChildIndices = (viewport, accumResults = []) => {
-                const children = viewport.children(props.targetFilter);
+                const children = viewport.children(targetSelector, targetFilter);
                 const visibleChild = (() => {
-                    if (props.interpolation ?? true) {
+                    if (interpolation) {
                         return (
                         // at the end of scroll, the last section always win:
                         (viewport.isLastScroll ? findLast(children, (child) => child.isPartiallyVisible(viewport)) : null)
@@ -354,9 +356,9 @@ export function Navscroll(props) {
         //#region when descendants added/removed
         const attachDescendants = () => {
             const descendants = (() => {
-                const descendants = Array.from(target.querySelectorAll('*'));
-                if (props.targetFilter)
-                    return [target, ...descendants.filter(props.targetFilter)];
+                const descendants = Array.from(target.querySelectorAll(targetSelector));
+                if (targetFilter)
+                    return [target, ...descendants.filter(targetFilter)];
                 return [target, ...descendants];
             })();
             descendants.forEach((descendant) => {
@@ -401,11 +403,11 @@ export function Navscroll(props) {
             mutationObserver?.disconnect();
             detachDescendants?.(); // detach
         };
-    }, [props.targetRef, props.targetFilter, props.interpolation]); // (re)run the setups & cleanups on every time the navscroll's target, targetFilter, & interpolation changes
+    }, [targetRef, targetSelector, targetFilter, interpolation]); // (re)run the setups & cleanups on every time the navscroll's targetRef, targetSelector, targetFilter, & interpolation changes
     // handlers:
     const itemHandleClick = (e, deepLevelsCurrent) => {
         e.stopPropagation(); // do not bubbling click event to Navscroll's parent
-        const target = (props.targetRef instanceof HTMLElement) ? props.targetRef : props.targetRef?.current;
+        const target = (targetRef instanceof HTMLElement) ? targetRef : targetRef?.current;
         if (!target)
             return; // target was not set => nothing to do
         const targetChildrenReverse = (() => {
@@ -413,7 +415,7 @@ export function Navscroll(props) {
             let viewport = Viewport.from(target);
             for (const targetChildIndex of deepLevelsCurrent) {
                 // inspects:
-                const children = viewport.children(props.targetFilter);
+                const children = viewport.children(targetSelector, targetFilter);
                 const targetChild = children[targetChildIndex];
                 if (!targetChild)
                     break;
@@ -491,7 +493,7 @@ export function Navscroll(props) {
                     onClick: (e) => {
                         child.props.onClick?.(e);
                         if (!e.defaultPrevented) {
-                            if (child.props.actionCtrl ?? props.actionCtrl ?? false) {
+                            if (child.props.actionCtrl ?? props.actionCtrl ?? true) {
                                 itemHandleClick(e, deepLevelsCurrent);
                                 e.preventDefault();
                             } // if
@@ -511,7 +513,7 @@ export function Navscroll(props) {
                     active: (index === activeIndices[deepLevelsCurrent.length - 1]), 
                     // events:
                     onClick: (e) => {
-                        if (props.actionCtrl ?? false) {
+                        if (props.actionCtrl ?? true) {
                             itemHandleClick(e, deepLevelsCurrent);
                         } // if
                     } }, child));

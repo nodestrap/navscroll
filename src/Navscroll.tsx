@@ -16,6 +16,8 @@ import {
     // react components:
     ListItemProps,
     ListItem,
+    
+    ListSeparatorItem,
 }                           from '@nodestrap/list'
 import {
     // hooks:
@@ -394,6 +396,11 @@ export { ListItem, ListItem as NavscrollItem, ListItem as Item }
 
 
 
+// ListSeparatorItem => NavscrollSeparatorItem
+export { ListSeparatorItem, ListSeparatorItem as NavscrollSeparatorItem, ListSeparatorItem as SeparatorItem }
+
+
+
 export interface NavscrollProps<TElement extends HTMLElement = HTMLElement>
     extends
         NavProps<TElement>
@@ -421,6 +428,10 @@ export function Navscroll<TElement extends HTMLElement = HTMLElement>(props: Nav
         targetSelector = '*',
         targetFilter,
         interpolation = true,
+        
+        
+        // children:
+        children,
     ...restProps} = props;
 
     const defaultProps = {
@@ -738,7 +749,7 @@ export function Navscroll<TElement extends HTMLElement = HTMLElement>(props: Nav
         <Nav
             // other props:
             {...((): {} => {
-                const combinedProps: { [name: string]: any } = { ...props, ...defaultProps, };
+                const combinedProps: { [name: string]: any } = { ...restProps, ...defaultProps, };
                 
                 for (const [name, value] of Object.entries(nestNavProps)) {
                     if (value === undefined) continue;
@@ -830,7 +841,7 @@ export function Navscroll<TElement extends HTMLElement = HTMLElement>(props: Nav
             {...restProps}
             {...defaultProps}
         >
-            { mutateListItems(props.children, /*deepLevelsParent: */[]) }
+            { mutateListItems(children, /*deepLevelsParent: */[]) }
         </Nav>
     );
 }

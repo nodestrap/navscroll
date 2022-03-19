@@ -1,5 +1,5 @@
 import { default as React } from 'react';
-import { ListItemProps, ListItem } from '@nodestrap/list';
+import { ListItemProps, ListItem, ListSeparatorItem } from '@nodestrap/list';
 import { OrientationName, OrientationVariant, ListStyle, ListVariant, NavProps } from '@nodestrap/nav';
 export declare class Viewport {
     /**
@@ -74,6 +74,7 @@ export declare class Dimension {
 }
 export type { ListItemProps, ListItemProps as NavscrollItemProps, ListItemProps as ItemProps };
 export { ListItem, ListItem as NavscrollItem, ListItem as Item };
+export { ListSeparatorItem, ListSeparatorItem as NavscrollSeparatorItem, ListSeparatorItem as SeparatorItem };
 export interface NavscrollProps<TElement extends HTMLElement = HTMLElement> extends NavProps<TElement> {
     targetRef?: React.RefObject<HTMLElement> | HTMLElement | null;
     targetSelector?: string;

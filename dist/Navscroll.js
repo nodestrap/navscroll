@@ -5,7 +5,7 @@ import {
 // utilities:
 isTypeOf, } from '@nodestrap/utilities';
 // nodestrap components:
-import { ListItem, } from '@nodestrap/list';
+import { ListItem, ListSeparatorItem, } from '@nodestrap/list';
 import { Nav, } from '@nodestrap/nav';
 // utilities:
 export class Viewport {
@@ -235,6 +235,8 @@ const activeIndicesReducer = (indices, newIndices) => {
     return newIndices; // update with the new one
 };
 export { ListItem, ListItem as NavscrollItem, ListItem as Item };
+// ListSeparatorItem => NavscrollSeparatorItem
+export { ListSeparatorItem, ListSeparatorItem as NavscrollSeparatorItem, ListSeparatorItem as SeparatorItem };
 export function Navscroll(props) {
     // states:
     const [activeIndices, setActiveIndices] = useReducer(activeIndicesReducer, []);
@@ -243,7 +245,9 @@ export function Navscroll(props) {
     // accessibilities:
     orientation = 'block', 
     // scrolls:
-    targetRef, targetSelector = '*', targetFilter, interpolation = true, ...restProps } = props;
+    targetRef, targetSelector = '*', targetFilter, interpolation = true, 
+    // children:
+    children, ...restProps } = props;
     const defaultProps = {
         // accessibilities:
         orientation,
@@ -468,7 +472,7 @@ export function Navscroll(props) {
     React.createElement(Nav
     // other props:
     , { ...(() => {
-            const combinedProps = { ...props, ...defaultProps, };
+            const combinedProps = { ...restProps, ...defaultProps, };
             for (const [name, value] of Object.entries(nestNavProps)) {
                 if (value === undefined)
                     continue;
@@ -519,7 +523,7 @@ export function Navscroll(props) {
                     } }, child));
     }));
     // jsx:
-    return (React.createElement(Nav, { ...restProps, ...defaultProps }, mutateListItems(props.children, /*deepLevelsParent: */ [])));
+    return (React.createElement(Nav, { ...restProps, ...defaultProps }, mutateListItems(children, /*deepLevelsParent: */ [])));
 }
 Navscroll.prototype = Nav.prototype; // mark as Nav compatible
 export { Navscroll as default };
